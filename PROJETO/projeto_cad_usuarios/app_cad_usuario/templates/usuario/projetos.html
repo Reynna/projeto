@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projetos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --cor-primaria: #0cc7c7;
+        --cor-secundaria: #0a9e9e;
+        --cor-clara: #f8f9fa;
+        --cor-texto: #333;
+        --cor-destaque: #ff6b6b;
+        --verde-agua-claro: #a8e6cf;
+        --verde-agua-medio: #45b39f;
+        --verde-agua-escuro: #2e8f87;
+      }
+      
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f5f5f5;
+        color: var(--cor-texto);
+      }
+
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        width: 400px;
+        max-width: 90%;
+        position: relative;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--cor-texto);
+      }
+      
+      .navbar-superior {
+        background: linear-gradient(90deg, var(--cor-primaria), var(--cor-secundaria));
+        color: white;
+        padding: 10px 20px;
+        font-size: 1.5rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar-superior .navbar-brand {
+        font-size: 2rem;
+        font-weight: 600;
+        color: white;
+        display: flex;
+        align-items: center;
+      }
+      
+      .navbar-superior .navbar-brand i {
+        margin-right: 10px;
+      }
+
+      .menu-lateral {
+        background: linear-gradient(180deg, var(--cor-primaria), var(--cor-secundaria));
+        min-height: 100vh;
+        padding: 20px 15px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        position: fixed;
+        width: inherit;
+        max-width: inherit;
+      }
+
+      .menu-lateral .nav-link {
+        font-size: 1.1rem;
+        color: white;
+        margin-bottom: 15px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+      }
+
+      .menu-lateral .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        text-decoration: none;
+      }
+
+      .menu-lateral .nav-link i {
+        margin-right: 10px;
+        font-size: 1.3rem;
+      }
+      
+      .conteudo-principal {
+        background-color: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+        margin: 25px;
+        min-height: calc(100vh - 50px);
+      }
+
+      .btn-primary {
+        background: var(--verde-agua-medio);
+        border-color: var(--verde-agua-medio);
+        transition: all 0.3s ease;
+        padding: 10px 25px;
+        font-weight: 500;
+      }
+
+      .btn-primary:hover {
+        background: var(--verde-agua-escuro);
+        border-color: var(--verde-agua-escuro);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .table {
+        margin-top: 20px;
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .table thead th {
+        font-weight: 600;
+        color: var(--cor-texto);
+        padding: 15px;
+        font-size: 0.95rem;
+      }
+
+      .table tbody td {
+        padding: 15px;
+        vertical-align: middle;
+        color: var(--cor-texto);
+        border-color: #f0f0f0;
+      }
+
+      .table tbody tr:hover {
+        background-color: var(--cor-clara);
+      }
+
+      .modal-content {
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-control {
+        border: 1px solid #e0e0e0;
+        padding: 12px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .form-control:focus {
+        border-color: var(--verde-agua-medio);
+        box-shadow: 0 0 0 0.2rem rgba(69, 179, 159, 0.25);
+      }
+
+      .form-label {
+        color: var(--cor-texto);
+        margin-bottom: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+      <i class="bi bi-exclamation-circle"></i> {{ error }}
+    </div>
+    {% endif %}
+
+    {% if alerta_estoque %}
+    <div id="alertaEstoque" class="alerta-popup">
+      <p>{{ alerta_estoque }}</p>
+      <button onclick="fecharAlerta()">Fechar</button>
+    </div>
+    {% endif %}
+
+    <style>
+      .alerta-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #f8d7da; /* Fundo vermelho claro */
+        color: #721c24; /* Texto vermelho escuro */
+        padding: 20px;
+        border: 1px solid #f5c6cb;
+        border-radius: 5px;
+        z-index: 1000;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+      .alerta-popup button {
+        margin-top: 10px;
+        padding: 5px 10px;
+        background-color: #721c24;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .alerta-popup button:hover {
+        background-color: #501217;
+      }
+    </style>
+
+    <style>
+      /* Espaçamento para o conteúdo principal */
+      .col-md-10 {
+        background-color: #f8f9fa; /* Fundo claro */
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
+      }
+    </style>
+
+    <!-- Navbar -->
+    <nav class="navbar-superior">
+      <div class="container-fluid d-flex justify-content-between">
+        <span class="navbar-brand">
+          <i class="bi bi-clipboard-data"></i> Projetos
+        </span>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Menu Lateral -->
+        <div class="col-md-2 p-0">
+          <div class="menu-lateral">
+            <div class="d-flex flex-column h-100">
+              <ul class="nav flex-column mt-4">
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'pagina_inicial' %}">
+                    <i class="bi bi-house-door"></i> Página Inicial
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link active" href="{% url 'projetos' %}" style="background: rgba(255, 255, 255, 0.2);">
+                    <i class="bi bi-clipboard-data"></i> Projetos
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'historico' %}">
+                    <i class="bi bi-clock-history"></i> Histórico
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'estoque' %}">
+                    <i class="bi bi-box-seam"></i> Estoque
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <div class="col-md-10 offset-md-2">
+          <div class="conteudo-principal">
+            <div class="container">
+              <h2 class="mb-4 text-center" style="color: var(--cor-secundaria); font-weight: 600;">Gerenciamento de Projetos</h2>
+
+              <!-- Tabela -->
+              <div class="table-responsive">
+                <table class="table table-hover shadow-sm">
+                  <thead style="background: var(--verde-agua-claro)">
+                    <tr>
+                      <th class="border-0">Nome do Projeto</th>
+                      <th class="border-0">Material</th>
+                      <th class="border-0">Cor</th>
+                      <th class="border-0">Quantidade</th>
+                      <th class="border-0">Ações</th>
+                    </tr>
+                  </thead>
+              <tbody>
+                {% for projeto in projetos %}
+                <tr>
+                  <td class="fw-medium">{{ projeto.nome }}</td>
+                  <td>{{ projeto.material.material }}</td>
+                  <td><span class="badge bg-light text-dark">{{ projeto.material.cor }}</span></td>
+                  <td>{{ projeto.quantidade }}</td>
+                  <td>
+                    <button class="btn btn-sm rounded-pill me-2" style="background-color: var(--verde-agua-medio); color: white; padding: 5px 15px;" onclick="concluirProjeto('{{ projeto.id }}')">
+                      <i class="bi bi-check-circle me-1"></i> Concluir
+                    </button>
+                    <button class="btn btn-sm rounded-pill" style="background-color: var(--cor-destaque); color: white; padding: 5px 15px;" onclick="excluirProjeto('{{ projeto.id }}')">
+                      <i class="bi bi-trash me-1"></i> Excluir
+                    </button>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+            <!-- Botão para adicionar projeto -->
+            <div class="text-center mt-5">
+              <button class="btn btn-primary btn-lg rounded-pill shadow-sm" onclick="abrirModal()">
+                <i class="bi bi-plus-circle me-2"></i>Novo Projeto
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modalAdicionarProjeto" style="display: none;">
+      <div class="modal-content">
+        <button class="modal-close" onclick="fecharModal()">×</button>
+        <h4 class="text-center mb-4" style="color: var(--cor-secundaria); font-weight: 600;">Adicionar Novo Projeto</h4>
+        <form method="post" action="{% url 'projetos' %}">
+          {% csrf_token %}
+          <div class="mb-4">
+            <label for="nome" class="form-label fw-medium">Nome do Projeto</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0"><i class="bi bi-pencil"></i></span>
+              <input type="text" class="form-control form-control-lg border-start-0" id="nome" name="nome" required placeholder="Digite o nome do projeto">
+            </div>
+          </div>
+          <div class="mb-4">
+            <label for="material" class="form-label fw-medium">Material</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0"><i class="bi bi-box-seam"></i></span>
+              <select class="form-control form-control-lg border-start-0" id="material" name="material" required>
+                <option value="" disabled selected>Selecione o material</option>
+                {% for item in materiais %}
+                <option value="{{ item.id }}">{{ item.material }} ({{ item.cor }}) - {{ item.quantidade_metros }} metros disponíveis</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="mb-4">
+            <label for="quantidade" class="form-label fw-medium">Quantidade do Projeto</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0"><i class="bi bi-123"></i></span>
+              <input type="number" class="form-control form-control-lg border-start-0" id="quantidade" name="quantidade" min="1" value="1" required>
+            </div>
+          </div>
+          <div class="mb-4">
+            <label for="metros_por_unidade" class="form-label fw-medium">Metros por Unidade</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0"><i class="bi bi-rulers"></i></span>
+              <input type="number" class="form-control form-control-lg border-start-0" id="metros_por_unidade" name="metros_por_unidade" step="0.01" required placeholder="Digite a quantidade de metros">
+            </div>
+          </div>
+          <div class="text-center mt-5">
+            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5">
+              <i class="bi bi-plus-circle me-2"></i>Adicionar
+            </button>
+            <button type="button" class="btn btn-outline-secondary btn-lg rounded-pill px-5 ms-3" onclick="fecharModal()">
+              <i class="bi bi-x-circle me-2"></i>Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+      // Função para concluir projeto
+      function concluirProjeto(id) {
+        if (confirm('Tem certeza que deseja concluir este projeto?')) {
+          fetch(`/projetos/concluir/${id}/`, { 
+            method: 'POST', 
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' } 
+          })
+          .then(response => {
+            if (response.ok) {
+              location.reload(); // Recarrega a página para atualizar a tabela
+            } else {
+              alert('Erro ao concluir o projeto.');
+            }
+          });
+        }
+      }
+
+      // Função para excluir projeto
+      function excluirProjeto(id) {
+        if (confirm('Tem certeza que deseja excluir este projeto?')) {
+          fetch(`/projetos/excluir/${id}/`, { method: 'POST', headers: { 'X-CSRFToken': '{{ csrf_token }}' } })
+            .then(response => {
+              if (response.ok) {
+                location.reload();
+              } else {
+                alert('Erro ao excluir o projeto.');
+              }
+            });
+        }
+      }
+
+      // Função para abrir o modal
+      function abrirModal() {
+        document.getElementById('modalAdicionarProjeto').style.display = 'flex';
+      }
+
+      // Função para fechar o modal
+      function fecharModal() {
+        document.getElementById('modalAdicionarProjeto').style.display = 'none';
+      }
+
+      function fecharAlerta() {
+        document.getElementById('alertaEstoque').style.display = 'none';
+      }
+    </script>
+
+    <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.btn-concluir').forEach(function (botao) {
+      botao.addEventListener('click', function (e) {
+        e.preventDefault(); // impede a navegação imediata
+        const url = this.href;
+
+        Swal.fire({
+          title: 'Tem certeza?',
+          text: 'Este projeto será marcado como concluído!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#28a745',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sim, concluir!',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = url;
+          }
+        });
+      });
+    });
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.btn-concluir').forEach(function (botao) {
+      botao.addEventListener('click', function (e) {
+        e.preventDefault(); // impede a navegação imediata
+        const url = this.href;
+
+        Swal.fire({
+          title: 'Tem certeza?',
+          text: 'Este projeto será marcado como concluído!',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#28a745',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sim, concluir!',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = url;
+          }
+        });
+      });
+    });
+  });
+</script>
+
+  </body>
+</html>
